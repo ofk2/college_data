@@ -1,0 +1,790 @@
+Welcolme to the College Data Project Home Page!
+
+
+
+<?php
+  $database = 'ofk2';
+  $program  = new program();
+  class program
+  {
+      function __construct()
+      {
+          $page = 'homepage';
+          $arg  = NULL;
+          if (isset($_REQUEST['page'])) {
+              $page = $_REQUEST['page'];
+          }
+          if (isset($_REQUEST['arg'])) {
+              $arg = $_REQUEST['arg'];
+          }
+          //echo $page;
+          $page = new $page($arg);
+      }
+      function __destruct()
+      {
+      }
+  }
+  abstract class page
+  {
+      public $content;
+      function menu()
+      {
+          $menu = "<table>";
+          $menu .= '<tr><td><a href="./pr2.php">HOME        </a></td></tr>';
+          $menu .= '<tr><td><a href="./pr2.php?page=question1">QUESTION1        </a></td></tr>';
+          $menu .= '<tr><td><a href="./pr2.php?page=question2">QUESTION2        </a></td></tr>';
+          $menu .= '<tr><td><a href="./pr2.php?page=question3">QUESTION3        </a></td></tr>';
+          $menu .= '<tr><td><a href="./pr2.php?page=question4">QUESTION4        </a></td></tr>';
+          $menu .= '<tr><td><a href="./pr2.php?page=question5">QUESTION5        </a></td></tr>';
+          $menu .= '<tr><td><a href="./pr2.php?page=question6">QUESTION6        </a></td></tr>';
+          $menu .= '<tr><td><a href="./pr2.php?page=question7">QUESTION7        </a></td></tr>';
+          $menu .= '<tr><td><a href="./pr2.php?page=question8">QUESTION8        </a></td></tr>';
+          $menu .= '<tr><td><a href="./pr2.php?page=question9">QUESTION9        </a></td></tr>';
+          $menu .= '<tr><td><a href="./pr2.php?page=question10">QUESTION10    </a></td></tr>';
+          $menu .= '<tr><td><a href="./pr2.php?page=question11">QUESTION11    </a></td></tr>';
+          $menu .= '</table>';
+          return $menu;
+      }
+      function __construct($arg = NULL)
+      {
+          if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+              $this->get();
+          } else {
+              $this->post();
+          }
+      }
+      function get()
+      {
+      }
+      function post()
+      {
+      }
+      function __destruct()
+      {
+          echo $this->content;
+      }
+  }
+  class homepage extends page
+  {
+      function get()
+      {
+          $this->content .= $this->menu();
+      }
+  }
+  class question1 extends page
+  {
+      function get()
+      {
+          //$this->content .= $this->menu();
+          try {
+              $host     = "sql.njit.edu";
+              $database = "ofk2";
+              $DBH      = new PDO("mysql:host=$host;dbname=$database", "ofk2", "JPZH4NZy");
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT enrollment.unitid, efytotlt, hd2011a.instnm
+            FROM enrollment, hd2011a
+            WHERE enrollment.unitid = hd2011a.unitid
+            ORDER BY efytotlt DESC 
+            LIMIT 20");
+              $this->content .= "<table border = 3>";
+              $this->content .= "<tr>";
+              $this->content .= "<th>INSTITUTE NAME</th>";
+              $this->content .= "<th>COl2UNT</th>";
+              $this->content .= "</tr>";
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['efytotlt'] . "</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+      }
+      function num1()
+      {
+          $sql = mysql_query("SELECT enrollment.unitid, efytotlt, hd2011a.instnm
+FROM enrollment, hd2011a
+WHERE enrollment.unitid = hd2011a.unitid
+ORDER BY efytotlt DESC 
+LIMIT 10") or die(mysql_error());
+          echo "<table border cellpadding=3>";
+          echo "<table>"; {
+              echo "<tr>";
+              echo "<th>INSTITUTE NAME':</th> <td>" . $info['INSTITUTE NAME'] . "</td> ";
+              echo "<th>COUNT:</th> <td>" . $info['COUNT'] . "</td> ";
+          }
+          echo "</table>";
+      }
+  }
+  class question2 extends page
+  {
+      function get()
+      {
+          //$this->content .= $this->menu();
+          try {
+              $host     = "sql.njit.edu";
+              $database = "ofk2";
+              $DBH      = new PDO("mysql:host=$host;dbname=$database", "ofk2", "JPZH4NZy");
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT liability.unitid, hd2011a.instnm, liability.f1a13
+                FROM liability
+                INNER JOIN hd2011a ON liability.unitid = hd2011a.unitid
+                ORDER BY f1a13 DESC 
+                LIMIT 20");
+              $this->content .= "<table border = 3>";
+              $this->content .= "<tr>";
+              $this->content .= "<th>UNITID</th>";
+              $this->content .= "<th>INSTITUTE NAME</th>";
+              $this->content .= "<th>LIABILITY</th>";
+              $this->content .= "</tr>";
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['unitid'] . "</td>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a13'] . "</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+          $this->content .= $this->num2();
+      }
+      function num2()
+      {
+          $question = '<form action="pr2.php?page=num2" method="post">
+    <P>
+    page  that lists the colleges with the largest amount of total liabilities
+    </P>
+</form>
+';
+          return $question;
+      }
+      function post()
+      {
+          print_r($_POST);
+      }
+  }
+  class question3 extends page
+  {
+      function get()
+      {
+          //$this->content .= $this->menu();
+          try {
+              $host     = "sql.njit.edu";
+              $database = "ofk2";
+              $DBH      = new PDO("mysql:host=$host;dbname=$database", "ofk2", "JPZH4NZy");
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT hd2011a.instnm, hd2011a.state, liability.f1a18
+            FROM liability
+            INNER JOIN hd2011a ON liability.unitid = hd2011a.unitid
+            ORDER BY f1a18 DESC 
+            LIMIT 20");
+              $this->content .= "<table border = 5>";
+              $this->content .= "<tr>";
+              $this->content .= "<th>INSTITUTE NAME</th>";
+              $this->content .= "<th>STATE</th>";
+              $this->content .= "<th>TOTAL NET ASSETS</th>";
+              $this->content .= "</tr>";
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['state'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a18'] . "</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+          $this->content .= $this->num3();
+      }
+      function num3()
+      {
+          $question = '<form action="pr2.php?page=num3" method="post">
+    <P>
+    page that lists the colleges with the largest amount of net assets
+    </P>
+</form>
+';
+          return $question;
+      }
+      function post()
+      {
+          print_r($_POST);
+      }
+  }
+  //question 5
+  class question5 extends page
+  {
+      function get()
+      {
+          //$this->content .= $this->menu();
+          $this->content .= $this->question5();
+      }
+      function question5()
+      {
+          try {
+              $username = 'ofk2';
+              $password = 'JPZH4NZy';
+              $DBH      = new PDO("mysql:host=sql.njit.edu;dbname=ofk2", $username, $password);
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT hd2011a.instnm, (liability.f1b09/enrollment.efytotlt) AS rev_ps FROM hd2011a INNER JOIN liability ON hd2011a.unitid = liability.unitid INNER JOIN enrollment ON liability.unitid = enrollment.unitid ORDER BY rev_ps DESC LIMIT 10");
+              //tbl
+              $this->content .= "<table border = 5>";
+              $this->content .= "<tr>";
+              $this->content .= "<th>Institution Name</th>";
+              $this->content .= "<th>Total Revenue Per Student</th>";
+              $this->content .= "<th>state</th>";
+              $this->content .= "</tr>";
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['rev_ps'] . "</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+      }
+  }
+  // question6
+  class question6 extends page
+  {
+      function get()
+      {
+          //$this->content .= $this->menu();
+          $this->content .= $this->question6();
+      }
+      function question6()
+      {
+          try {
+              $username = 'ofk2';
+              $password = 'JPZH4NZy';
+              $DBH      = new PDO("mysql:host=sql.njit.edu;dbname=ofk2", $username, $password);
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT hd2011a.instnm, (liability.f1a18/enrollment.efytotlt) AS asset_ps FROM hd2011a INNER JOIN liability ON hd2011a.unitid = liability.unitid INNER JOIN enrollment ON liability.unitid = enrollment.unitid ORDER BY asset_ps DESC LIMIT 20");
+              //table header
+              $this->content .= "<table border = 5>";
+              $this->content .= "<tr>";
+              $this->content .= "<th>Institution Name</th>";
+              $this->content .= "<th>Total Assets Per Student</th>";
+              $this->content .= "</tr>";
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['asset_ps'] . "</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+      }
+  }
+  //question7
+  class question7 extends page
+  {
+      function get()
+      {
+          $this->content .= $this->menu();
+          $this->content .= $this->question7();
+      }
+      function question7()
+      {
+          try {
+              $username = 'ofk2';
+              $password = 'JPZH4NZy';
+              $DBH      = new PDO("mysql:host=sql.njit.edu;dbname=ofk2", $username, $password);
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT hd2011a.instnm, (liability.f1a13/enrollment.efytotlt) AS liabilities_ps FROM hd2011a INNER JOIN liability ON hd2011a.unitid = liability.unitid INNER JOIN enrollment ON liability.unitid = enrollment.unitid ORDER BY liabilities_ps DESC LIMIT 20");
+              //table header
+              $this->content .= "<table border = 3>";
+              $this->content .= "<tr>";
+              $this->content .= "<th>Institution Name</th>";
+              $this->content .= "<th>Total Liabilities Per Student</th>";
+              $this->content .= "</tr>";
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['liabilities_ps'] . "</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+      }
+  }
+  //question8
+  class question8 extends page
+  {
+      function get()
+      {
+          $this->content .= $this->menu2();
+          $this->content .= $this->question();
+      }
+      function question8()
+      {
+          try {
+              $username = 'ofk2';
+              $password = 'JPZH4NZy';
+              $DBH      = new PDO("mysql:host=sql.njit.edu;dbname=ofk2", $username, $password);
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT hd2011a.instnm, enrollment.efytotlt, liability.f1a13, liability.f1a18, liability.f1b09, (liability.f1b09/enrollment.efytotlt) AS rev_ps, (liability.f1a18/enrollment.efytotlt) AS asset_ps, (liability.f1a13/enrollment.efytotlt) AS liability_ps FROM hd2011a INNER JOIN liability ON hd2011a.unitid = liability.unitid INNER JOIN enrollment ON liability.unitid = enrollment.unitid ORDER BY enrollment.efytotlt DESC LIMIT 10");
+              //tbl
+              $this->content .= '<table border = 5>';
+              $this->content .= '<tr>';
+              $this->content .= '<th>Institution Name</th>';
+              $this->content .= '<th><a href="./index.php?page=question8"> Highest Enrollments</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option1">Top Liabilities</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option2">Top Assets</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option3">Top Revenues</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option4">Revenues Per Student</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option5">Total Assets Per Student</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option6">Total Liabilities Per Student</a></th>';
+              $this->content .= '</tr>';
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['efytotlt'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a13'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a18'] . "</td>";
+                  $this->content .= "<td>" . $row['f1b09'] . "</td>";
+                  $this->content .= "<td>" . $row['rev_ps'] . "</td>";
+                  $this->content .= "<td>" . $row['asset_ps'] . "</td>";
+                  $this->content .= "<td>" . $row['liability_ps'] . "</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+      }
+  }
+  // option1
+  class option1 extends page
+  {
+      function get()
+      {
+          //$this->content .= $this->menu();
+          $this->content .= $this->option1();
+      }
+      function option1()
+      {
+          try {
+              $username = 'ofk2';
+              $password = 'JPZH4NZy';
+              $DBH      = new PDO("mysql:host=sql.njit.edu;dbname=ofk2", $username, $password);
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT hd2011a.instnm, enrollment.efytotlt, liability.f1a13, liability.f1a18, liability.f1b09, (liability.f1b09/enrollment.efytotlt) AS rev_ps, (liability.f1a18/enrollment.efytotlt) AS asset_ps, (liability.f1a13/enrollment.efytotlt) AS liability_ps FROM hd2011a INNER JOIN liability ON hd2011a.unitid = liability.unitid INNER JOIN enrollment ON liability.unitid = enrollment.unitid ORDER BY liability.f1a13 DESC LIMIT 10");
+              //table header
+              $this->content .= '<table border = 3>';
+              $this->content .= '<tr>';
+              $this->content .= '<th>Institution Name</th>';
+              $this->content .= '<th><a href="./index.php?page=question8">Enrollments</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option1"> Liabilities</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option2"> Assets</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option3"> Revenues</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option4"> Revenues Per Student</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option5"> Assets Per Student</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option6"> Liabilities Per Student</a></th>';
+              $this->content .= '</tr>';
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['enrollment'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a13'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a18'] . "</td>";
+                  $this->content .= "<td>" . $row['f1b09'] . "</td>";
+                  $this->content .= "<td>" . $row['rev_ps'] . "</td>";
+                  $this->content .= "<td>" . $row['asset_ps'] . "</td>";
+                  $this->content .= "<td>" . $row['liability_ps'] . "</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+      }
+  }
+  class option2 extends page
+  {
+      function get()
+      {
+          //$this->content .= $this->menu();
+          $this->content .= $this->question();
+      }
+      function option2()
+      {
+          try {
+              $username = 'ofk2';
+              $password = 'JPZH4NZy';
+              $DBH      = new PDO("mysql:host=sql.njit.edu;dbname=ofk2", $username, $password);
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT hd2011a.instnm, enrollment.efytotlt, liability.f1a13, liability.f1a18, liability.f1b09, (liability.f1b09/enrollment.efytotlt) AS rev_ps, (liability.f1a18/enrollment.efytotlt) AS asset_ps, (liability.f1a13/enrollment.efytotlt) AS liability_ps FROM hd2011a INNER JOIN enrollment ON hd2011a.unitid = enrollment.unitid INNER JOIN liability ON enrollment.unitid = liability.unitid ORDER BY liability.f1a18 DESC LIMIT 10");
+              //table header
+              $this->content .= '<table border = 3>';
+              $this->content .= '<tr>';
+              $this->content .= '<th>Institution Name</th>';
+              $this->content .= '<th><a href="./index.php?page=question8">Enrollments</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option1">Total Liabilities</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option2">Total Assets</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option3">Total Revenues</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option4">Total Revenues Per Student</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option5">Total Assets Per Student</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option6">Total Liabilities Per Student</a></th>';
+              $this->content .= '</tr>';
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['enrollment'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a13'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a18'] . "</td>";
+                  $this->content .= "<td>" . $row['f1b09'] . "</td>";
+                  $this->content .= "<td>" . $row['rev_ps'] . "</td>";
+                  $this->content .= "<td>" . $row['asset_ps'] . "</td>";
+                  $this->content .= "<td>" . $row['liability_ps'] . "</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+      }
+  }
+  //option3
+  class option3 extends page
+  {
+      function get()
+      {
+          //$this->content .= $this->menu();
+          $this->content .= $this->question();
+      }
+      function option3()
+      {
+          try {
+              $username = 'ofk2';
+              $password = 'JPZH4NZy';
+              $DBH      = new PDO("mysql:host=sql.njit.edu;dbname=ofk2", $username, $password);
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT hd2011a.instnm, enrollment.efytotlt, liability.f1a13, liability.f1a18, liability.f1b09, (liability.f1b09/enrollment.efytotlt) AS rev_ps, (liability.f1a18/enrollment.efytotlt) AS asset_ps, (liability.f1a13/enrollment.efytotlt) AS liability_ps FROM hd2011a INNER JOIN enrollment ON hd2011a.unitid = enrollment.unitid INNER JOIN liability ON enrollment.unitid = liability.unitid ORDER BY liability.f1a18 DESC LIMIT 10");
+              //table header
+              $this->content .= '<table border = 3>';
+              $this->content .= '<tr>';
+              $this->content .= '<th>Institution Name</th>';
+              $this->content .= '<th><a href="./index.php?page=question8">Enrollments</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option1">Total Liabilities</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option2">Total Assets</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option3">Total Revenues</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option4">Total Revenues Per Student</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option5">Total Assets Per Student</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option6">Total Liabilities Per Student</a></th>';
+              $this->content .= '</tr>';
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['enrollment'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a13'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a18'] . "</td>";
+                  $this->content .= "<td>" . $row['f1b09'] . "</td>";
+                  $this->content .= "<td>" . $row['rev_ps'] . "</td>";
+                  $this->content .= "<td>" . $row['asset_ps'] . "</td>";
+                  $this->content .= "<td>" . $row['liability_ps'] . "</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+      }
+  }
+  //option4
+  class option4 extends page
+  {
+      function get()
+      {
+          //$this->content .= $this->menu();
+          $this->content .= $this->option4();
+      }
+      function option4()
+      {
+          try {
+              $username = 'ofk2';
+              $password = 'JPZH4NZy';
+              $DBH      = new PDO("mysql:host=sql.njit.edu;dbname=ofk2", $username, $password);
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT hd2011a.instnm, enrollment.efytotlt, liability.f1a13, liability.f1a18, liability.f1b09, (liability.f1b09/enrollment.efytotlt) AS rev_ps, (liability.f1a18/enrollment.efytotlt) AS asset_ps, (liability.f1a13/enrollment.efytotlt) AS liability_ps FROM hd2011a INNER JOIN enrollment ON hd2011a.unitid = enrollment.unitid INNER JOIN liability ON enrollment.unitid = liability.unitid ORDER BY liability.f1a18 DESC LIMIT 10");
+              //table header
+              $this->content .= '<table border = 3>';
+              $this->content .= '<tr>';
+              $this->content .= '<th>Institution Name</th>';
+              $this->content .= '<th><a href="./index.php?page=question8">Enrollments</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option1">Total Liabilities</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option2">Total Assets</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option3">Total Revenues</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option4">Total Revenues Per Student</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option5">Total Assets Per Student</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option6">Total Liabilities Per Student</a></th>';
+              $this->content .= '</tr>';
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['enrollment'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a13'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a18'] . "</td>";
+                  $this->content .= "<td>" . $row['f1b09'] . "</td>";
+                  $this->content .= "<td>" . $row['rev_ps'] . "</td>";
+                  $this->content .= "<td>" . $row['asset_ps'] . "</td>";
+                  $this->content .= "<td>" . $row['liability_ps'] . "</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+      }
+  }
+  // option 5
+  class option5 extends page
+  {
+      function get()
+      {
+          //$this->content .= $this->menu();
+          $this->content .= $this->question();
+      }
+      function option5()
+      {
+          try {
+              $username = 'ofk2';
+              $password = 'JPZH4NZy';
+              $DBH      = new PDO("mysql:host=sql.njit.edu;dbname=ofk2", $username, $password);
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT hd2011a.instnm, enrollment.efytotlt, liability.f1a13, liability.f1a18, liability.f1b09, (liability.f1b09/enrollment.efytotlt) AS rev_ps, (liability.f1a18/enrollment.efytotlt) AS asset_ps, (liability.f1a13/effy2011.enrollment) AS liability_ps FROM hd2011a INNER JOIN liability ON hd2011a.unitid = liability.unitid INNER JOIN  ON liability.unitid = enrollment.unitid ORDER BY asset_ps DESC LIMIT 10");
+              //table header
+              $this->content .= '<table border = 3>';
+              $this->content .= '<tr>';
+              $this->content .= '<th>Institution Name</th>';
+              $this->content .= '<th><a href="./index.php?page=question8">Enrollments</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option1">Total Liabilities</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option2">Total Assets</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option3">Total Revenues</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option4">Total Revenues Per Student</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option5">Total Assets Per Student</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option6">Total Liabilities Per Student</a></th>';
+              $this->content .= '</tr>';
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['enrollment'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a13'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a18'] . "</td>";
+                  $this->content .= "<td>" . $row['f1b09'] . "</td>";
+                  $this->content .= "<td>" . $row['rev_ps'] . "</td>";
+                  $this->content .= "<td>" . $row['asset_ps'] . "</td>";
+                  $this->content .= "<td>" . $row['liability_ps'] . "</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+      }
+  }
+  // option 6
+  class option6 extends page
+  {
+      function get()
+      {
+          //$this->content .= $this->menu();
+          $this->content .= $this->question();
+      }
+      function option6()
+      {
+          try {
+              $username = 'ofk2';
+              $password = 'JPZH4NZy';
+              $DBH      = new PDO("mysql:host=sql.njit.edu;dbname=ofk2", $username, $password);
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT hd2011a.instnm, enrollment.efytotlt, liability.f1a13, liability.f1a18, liability.f1b09, (liability.f1b09/enrollment.efytotlt) AS rev_ps, (liability.f1a18/enrollment.efytotlt) AS asset_ps, (liability.f1a13/effy2011.enrollment) AS liability_ps FROM hd2011a INNER JOIN liability ON hd2011a.unitid = liability.unitid INNER JOIN  ON liability.unitid = enrollment.unitid ORDER BY asset_ps DESC LIMIT 10");
+              //table header
+              $this->content .= '<table border = 5>';
+              $this->content .= '<tr>';
+              $this->content .= '<th>Institution Name</th>';
+              $this->content .= '<th><a href="./index.php?page=question8">Enrollments</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option1">Total Liabilities</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option2">Total Assets</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option3">Total Revenues</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option4">Total Revenues Per Student</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option5">Total Assets Per Student</a></th>';
+              $this->content .= '<th><a href="./index.php?page=option6">Total Liabilities Per Student</a></th>';
+              $this->content .= '</tr>';
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['enrollment'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a13'] . "</td>";
+                  $this->content .= "<td>" . $row['f1a18'] . "</td>";
+                  $this->content .= "<td>" . $row['f1b09'] . "</td>";
+                  $this->content .= "<td>" . $row['rev_ps'] . "</td>";
+                  $this->content .= "<td>" . $row['asset_ps'] . "</td>";
+                  $this->content .= "<td>" . $row['liability_ps'] . "</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+      }
+  }
+  // question9
+  class question9 extends page
+  {
+      function get()
+      {
+          //$this->content .= $this->menu();
+          $this->content .= $this->question9();
+      }
+      function question9()
+      {
+          $this->content .= '<form action="index.php?page=question9" method="post">
+<P>
+<LABEL for="state">Please Enter a State: </LABEL>
+<INPUT type="text" name="state" id="state"><BR>
+<INPUT type="submit" value="Search">
+</P>
+</form>
+';
+      }
+      function post()
+      {
+          try {
+              $state    = $_POST["state"];
+              $username = 'ofk2';
+              $password = 'JPZH4NZy';
+              $DBH      = new PDO("mysql:host=sql.njit.edu;dbname=ofk2", $username, $password);
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT instnm, state FROM hd2011a WHERE stabbr = '" . $state . "'");
+              //$this->content .= $this->menu();
+              $this->content .= "<table border = 3>";
+              $this->content .= "<tr>";
+              $this->content .= "<th>Institution Name</th>";
+              $this->content .= "<th>State</th>";
+              $this->content .= "</tr>";
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['state'] . "</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+      }
+  }
+  //question 10
+  class question10 extends page
+  {
+      function get()
+      {
+          //$this->content .= $this->menu();
+          $this->content .= $this->question10();
+      }
+      function question10()
+      {
+          try {
+              $username = 'ofk2';
+              $password = 'JPZH4NZy';
+              $DBH      = new PDO("mysql:host=sql.njit.edu;dbname=ofk2", $username, $password);
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT hd2011a.instnm, ((liability.f1a13 - financial10.f1a13) / financial10.f1a13) AS increase_percent FROM hd2011a JOIN financial10 on hd2011a.unitid = financial10.unitid JOIN liability ON financial10.unitid = liability.unitid ORDER BY increase_percent DESC LIMIT 10");
+              //table header
+              $this->content .= "<table border = 4>";
+              $this->content .= "<tr>";
+              $this->content .= "<th>Institution Name</th>";
+              $this->content .= "<th>Percentage Increase in Total Liabilities</th>";
+              $this->content .= "</tr>";
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['increase_percent'] . "%</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+      }
+  }
+  //last question
+  class question11 extends page
+  {
+      function get()
+      {
+          //$this->content .= $this->menu();
+          $this->content .= $this->question();
+      }
+      function question11()
+      {
+          try {
+              $username = 'ofk2';
+              $password = 'JPZH4NZy';
+              $DBH      = new PDO("mysql:host=sql.njit.edu;dbname=ofk2", $username, $password);
+              $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              $STH = $DBH->query("SELECT hd2011a.instnm, ((enrollment.efytotlt - enrollment2010.efytotlt) / enrollment2010.efytotlt) AS increase_percentage FROM hd2011a JOIN enrollment2010 on hd2011a.unitid = enrollment2010.unitid JOIN enrollment ON enrollment2010.unitid = enrollment.unitid ORDER BY increase_percentage DESC LIMIT 10");
+              ;
+              //tbl
+              $this->content .= "<table border = 3>";
+              $this->content .= "<tr>";
+              $this->content .= "<th> Name of the Institution</th>";
+              $this->content .= "<th>the percentage Increase in Enrollment</th>";
+              $this->content .= "</tr>";
+              while ($row = $STH->fetch()) {
+                  $this->content .= "<tr>";
+                  $this->content .= "<td>" . $row['instnm'] . "</td>";
+                  $this->content .= "<td>" . $row['increase_percentage'] . "%</td>";
+                  $this->content .= "</tr>";
+              }
+              $this->content .= "</table>";
+              $DBH = null;
+          }
+          catch (PDOException $e) {
+              echo $e->getMessage();
+          }
+      }
+  }
+?>
